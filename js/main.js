@@ -90,11 +90,6 @@ function getAvatar(number) {
 }
 
 const createAdvert = function (number) {
-  const randomTitle = getRandInt (0, TITLES.length -1);
-  const randomType = getRandInt (0, TYPES.length -1);
-  const checkinTime = getRandInt (0, FIXED_TIMES.length -1);
-  const checkoutTime = getRandInt (0, FIXED_TIMES.length -1);
-  const randomDescription = getRandInt (0, DESCRIPTIONS.length -1);
   const randomLatitude = getRandFloat(LOCATION_LATITUDE_MIN, LOCATION_LATITUDE_MAX, FLOATING_POINT);
   const randomLongitude = getRandFloat(LOCATION_LONGITUDE_MIN, LOCATION_LONGITUDE_MAX, FLOATING_POINT);
   return {
@@ -102,16 +97,16 @@ const createAdvert = function (number) {
       avatar: getAvatar(number),
     },
     offer: {
-      title: TITLES[randomTitle],
+      title: TITLES[getRandInt (0, TITLES.length -1)],
       address: `${randomLatitude}, ${randomLongitude}`,
       price: getRandInt (PRICE_MIN, PRICE_MAX),
-      type: TYPES[randomType],
+      type: TYPES[getRandInt (0, TYPES.length -1)],
       rooms: getRandInt (ROOMS_MIN, ROOMS_MAX),
       guests: getRandInt (GUESTS_MIN, GUESTS_MAX),
-      checkin: FIXED_TIMES[checkinTime],
-      checkout: FIXED_TIMES[checkoutTime],
+      checkin: FIXED_TIMES[getRandInt (0, FIXED_TIMES.length -1)],
+      checkout: FIXED_TIMES[getRandInt (0, FIXED_TIMES.length -1)],
       features: getRandArray(PROPERTIES),
-      description: DESCRIPTIONS[randomDescription],
+      description: DESCRIPTIONS[getRandInt (0, DESCRIPTIONS.length -1)],
       photos: getRandArray(PHOTOS),
     },
     location: {
