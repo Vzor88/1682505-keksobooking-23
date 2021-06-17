@@ -120,6 +120,6 @@ const createAdvert = function (index) {
   };
 };
 
-const setAdverts = new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
+const setAdverts = () => new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
 
 export {setAdverts};
