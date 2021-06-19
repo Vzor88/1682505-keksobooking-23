@@ -85,11 +85,11 @@ const GUESTS = {
   MAX: 10,
 };
 
-const ADVERT_COUNT = 2;
+const ADVERT_COUNT = 1;
 const FLOATING_POINT = 5;
 
 function getRandArray(array) {
-  const randomArray = new Array(getRandInt (1, array.length + 1)).fill(null).map(() => array[getRandInt (0, array.length -1)]);
+  const randomArray = new Array(getRandInt (1, array.length + 1)).fill(null).map(() => array[getRandInt (0, array.length - 1)]);
   return Array.from(new Set(randomArray));
 }
 
@@ -98,53 +98,12 @@ function getAvatar(number) {
 }
 
 function getRandomElementFromArray(array) {
-  return array[getRandInt (0, array.length -1)];
-}
-
-function getRandRooms(count) {
-  let descriptionRooms = `${count} комнат`;
-  if(count === 1) {
-    descriptionRooms = `${count} комната`;
-  }
-  if(count > 2 && count < 5 ) {
-    descriptionRooms = `${count} комнаты`;
-  }
-  return descriptionRooms;
-}
-
-function getRandGuests(count) {
-  let descriptionGuests = `${count} гостей`;
-  if(count === 1) {
-    descriptionGuests = `${count} гостя`;
-  }
-  return descriptionGuests;
+  return (array.length === 1) ? array[0] : array[getRandInt (0, array.length -1)];
 }
 
 function getLangRus(array, arrayRus) {
   return arrayRus[getRandInt (0, array.length -1)];
 }
-
-function getDisplayFeaturesList(array, itemList) {
-  const modifiers = array.map((feature) => `popup__feature--${feature}`);
-  itemList.querySelectorAll('.popup__feature').forEach((element) => {
-    const modfier = element.classList[1];
-    if(!modifiers.includes(modfier)) {
-      element.remove();
-    }
-  });
-  return modifiers;
-}
-
-function getDisplayPhotosList (array, itemList){
-  const photosItem = itemList.querySelector('.popup__photo');
-  photosItem.remove();
-  for(let item = 0; item < array.length; item++) {
-    const photosElement = photosItem.cloneNode(true);
-    photosElement.src = array[item];
-    itemList.appendChild(photosElement);
-  }
-}
-
 
 const createAdvert = function (index) {
   const randomLatitude = getRandFloat(LOCATIONS.LATITUDE_MIN, LOCATIONS.LATITUDE_MAX, FLOATING_POINT);
@@ -173,25 +132,4 @@ const createAdvert = function (index) {
   };
 };
 
-const setAdverts = () => new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
-
-export {setAdverts};
-
-const simularCardList = document.querySelector('.map__canvas');
-const simularAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
-
-const simularAdvert = setAdverts();
-simularAdvert.forEach((advert) => {
-  const simularItemCard = simularAdvertTemplate.cloneNode(true);
-  simularItemCard.querySelector('.popup__avatar').src = advert.author.avatar;
-  simularItemCard.querySelector('.popup__title').textContent = advert.offer.title;
-  simularItemCard.querySelector('.popup__text--address').textContent = advert.offer.address;
-  simularItemCard.querySelector('.popup__text--price').textContent = `${advert.offer.price} ₽/ночь`;
-  simularItemCard.querySelector('.popup__type').textContent = advert.offer.type;
-  simularItemCard.querySelector('.popup__text--capacity').textContent = `${getRandRooms(advert.offer.rooms)}  для ${getRandGuests(advert.offer.guests)}`;
-  simularItemCard.querySelector('.popup__text--time').textContent = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
-  getDisplayFeaturesList(advert.offer.features, simularItemCard.querySelector('.popup__features'));
-  simularCardList.appendChild(simularItemCard);
-  simularItemCard.querySelector('.popup__description').textContent = advert.offer.description;
-  getDisplayPhotosList(advert.offer.photos, simularItemCard.querySelector('.popup__photos'));
-});
+export {createAdvert, ADVERT_COUNT};
