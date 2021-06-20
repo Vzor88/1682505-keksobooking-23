@@ -1,9 +1,9 @@
 import {setAdverts} from './card.js';
-import {deactivate , activate, generalForm} from './activate.js';
+import {deactivateForm , activateForm, generalForm} from './activate-form.js';
 
 if (generalForm) {
-  deactivate();
+  deactivateForm();
 }
 
 setAdverts();
-activate();
+activateForm();
