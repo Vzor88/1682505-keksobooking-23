@@ -85,7 +85,7 @@ const GUESTS = {
   MAX: 10,
 };
 
-const ADVERT_COUNT = 1;
+const ADVERT_COUNT = 10;
 const FLOATING_POINT = 5;
 
 function getRandArray(array) {
