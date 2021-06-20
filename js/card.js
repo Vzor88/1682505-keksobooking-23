@@ -14,11 +14,11 @@ function getDisplayFeaturesList(array, itemList) {
 function getDisplayPhotosList (array, itemList){
   const photosItem = itemList.querySelector('.popup__photo');
   photosItem.remove();
-  for(let index = 0; index < array.length; index++) {
+  array.forEach((string) => {
     const photosElement = photosItem.cloneNode(true);
-    photosElement.src = array[index];
+    photosElement.src = string;
     itemList.appendChild(photosElement);
-  }
+  });
 }
 
 function getRandRooms(count) {
@@ -44,6 +44,7 @@ const buildCardList = document.querySelector('#map-canvas');
 const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
 const setAdverts = () => new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
 const buildAdvert = setAdverts();
+const buildListFragment = document.createDocumentFragment();
 
 buildAdvert.forEach((advert) => {
   const buildItemCard = buildAdvertTemplate.cloneNode(true);
@@ -60,7 +61,10 @@ buildAdvert.forEach((advert) => {
   buildItemCard.querySelector('.popup__description').textContent = advert.offer.description;
   getDisplayPhotosList(advert.offer.photos, buildItemCard.querySelector('.popup__photos'));
   if (!advert.offer.photos[0]) { buildItemCard.querySelector('.popup__photos').remove(); }
-  buildCardList.appendChild(buildItemCard);
+  buildListFragment.appendChild(buildItemCard);
 });
+
+const listElements = buildListFragment.querySelectorAll('.popup');
+buildCardList.appendChild(listElements[0]);
 
 export {setAdverts};
