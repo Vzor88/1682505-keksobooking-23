@@ -1,7 +1,7 @@
 import {getRandInt, getRandFloat} from './util.js';
 
 const TITLES = [
-  'Продаю отличную квартиру!',
+  'Сдаётся номер для молодожёнов',
   'Сдам дом в аренду',
   'Продам малогабаритную квартиру',
   'Продам дедушкин дом',
@@ -32,6 +32,14 @@ const TYPES = [
   'house',
   'bungalow',
   'hotel',
+];
+
+const TYPES_RUS = [
+  'Дворец',
+  'Квартира',
+  'Дом',
+  'Бунгало',
+  'Отель',
 ];
 
 const FIXED_TIMES = [
@@ -74,14 +82,14 @@ const ROOMS = {
 
 const GUESTS = {
   MIN: 1,
-  MAX: 100,
+  MAX: 10,
 };
 
-const ADVERT_COUNT = 10;
+const ADVERT_COUNT = 1;
 const FLOATING_POINT = 5;
 
 function getRandArray(array) {
-  const randomArray = new Array(getRandInt (1, array.length + 1)).fill(null).map(() => array[getRandInt (0, array.length -1)]);
+  const randomArray = new Array(getRandInt (1, array.length + 1)).fill(null).map(() => array[getRandInt (0, array.length - 1)]);
   return Array.from(new Set(randomArray));
 }
 
@@ -90,7 +98,11 @@ function getAvatar(number) {
 }
 
 function getRandomElementFromArray(array) {
-  return array[getRandInt (0, array.length -1)];
+  return (array.length === 1) ? array[0] : array[getRandInt (0, array.length -1)];
+}
+
+function getLangRus(array, arrayRus) {
+  return arrayRus[getRandInt (0, array.length -1)];
 }
 
 const createAdvert = function (index) {
@@ -104,7 +116,7 @@ const createAdvert = function (index) {
       title: getRandomElementFromArray(TITLES),
       address: `${randomLatitude}, ${randomLongitude}`,
       price: getRandInt (PRICE.MIN, PRICE.MAX),
-      type: getRandomElementFromArray(TYPES),
+      type: getLangRus(TYPES, TYPES_RUS),
       rooms: getRandInt (ROOMS.MIN, ROOMS.MAX),
       guests: getRandInt (GUESTS.MIN, GUESTS.MAX),
       checkin: getRandomElementFromArray(FIXED_TIMES),
@@ -120,6 +132,4 @@ const createAdvert = function (index) {
   };
 };
 
-const setAdverts = new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
-
-export {setAdverts};
+export {createAdvert, ADVERT_COUNT};

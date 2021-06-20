@@ -1,3 +1,3 @@
-import {setAdverts} from './data.js';
+import {setAdverts} from './card.js';
 
-setAdverts;
+setAdverts();
