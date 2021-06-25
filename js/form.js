@@ -4,6 +4,9 @@ const entryFieldPrice = document.querySelector('#price');
 const entryFieldType = document.querySelector('#type');
 const fieldRooms = document.querySelector('#room_number');
 const fieldCapacity = document.querySelector('#capacity');
+const fieldTimeIn = document.querySelector('#timein');
+const fieldTimeOut = document.querySelector('#timeout');
+const parentCapacity = document.querySelector('.ad-form__element--capacity');
 const selectsList = document.querySelectorAll('.map__filter');
 const checkboxesList = document.querySelectorAll('.map__checkbox');
 let minPrice = 1000;
@@ -70,26 +73,64 @@ entryFieldPrice.addEventListener('input', () => {
   entryFieldPrice.reportValidity();
 });
 
+fieldTimeIn.addEventListener('change', () => {
+  fieldTimeOut.value = fieldTimeIn.value;
+});
+
+fieldTimeOut.addEventListener('change', () => {
+  fieldTimeIn.value = fieldTimeOut.value;
+});
+
+
+function isResetFieldCapacity(list) {  // Правильность данной функции у меня вызывают сомнения, но это единственный придуманный мной вариант,
+  parentCapacity.appendChild(list);    // как сделать так чтобы выпадающий список гостей сначало полностью удалялся ,а потом добавлялась копия "целого" списка
+  list.classList.add('capacity');
+  document.querySelector('.capacity').remove();
+  fieldCapacity.remove();
+  parentCapacity.appendChild(list);
+}
+
 fieldRooms.addEventListener('change', () => {
-  const listCapacity = Array.from(fieldCapacity);
-  listCapacity.forEach((item) => item.removeAttribute('disabled'));
+  const newFieldCapacity = fieldCapacity.cloneNode(true);
+  const listCapacity = Array.from(newFieldCapacity);
+  isResetFieldCapacity(newFieldCapacity);
   if(fieldRooms.value === '1') {
-    fieldCapacity.options[0].setAttribute('disabled', 'disabled');
-    fieldCapacity.options[1].setAttribute('disabled', 'disabled');
-    fieldCapacity.options[3].setAttribute('disabled', 'disabled');
-    fieldCapacity.value = 1;
+    listCapacity[0].remove();
+    listCapacity[1].remove();
+    listCapacity[3].remove();
   } else if (fieldRooms.value === '2') {
-    fieldCapacity.options[0].setAttribute('disabled', 'disabled');
-    fieldCapacity.options[3].setAttribute('disabled', 'disabled');
-    fieldCapacity.value = 2;
+    listCapacity[0].remove();
+    listCapacity[3].remove();
   } else if (fieldRooms.value === '3') {
-    fieldCapacity.options[3].setAttribute('disabled', 'disabled');
-    fieldCapacity.value = 3;
+    listCapacity[3].remove();
   } else {
-    fieldCapacity.options[0].setAttribute('disabled', 'disabled');
-    fieldCapacity.options[1].setAttribute('disabled', 'disabled');
-    fieldCapacity.options[2].setAttribute('disabled', 'disabled');
-    fieldCapacity.value = 0;
+    listCapacity[0].remove();
+    listCapacity[1].remove();
+    listCapacity[2].remove();
   }
 });
 
+// вариант этого же события через блокировку options
+
+// fieldRooms.addEventListener('change', () => {
+//   const listCapacity = Array.from(fieldCapacity);
+//   listCapacity.forEach((item) => item.removeAttribute('disabled'));
+//   if(fieldRooms.value === '1') {
+//     fieldCapacity.options[0].setAttribute('disabled', 'disabled');
+//     fieldCapacity.options[1].setAttribute('disabled', 'disabled');
+//     fieldCapacity.options[3].setAttribute('disabled', 'disabled');
+//     fieldCapacity.value = 1;
+//   } else if (fieldRooms.value === '2') {
+//     fieldCapacity.options[0].setAttribute('disabled', 'disabled');
+//     fieldCapacity.options[3].setAttribute('disabled', 'disabled');
+//     fieldCapacity.value = 2;
+//   } else if (fieldRooms.value === '3') {
+//     fieldCapacity.options[3].setAttribute('disabled', 'disabled');
+//     fieldCapacity.value = 3;
+//   } else {
+//     fieldCapacity.options[0].setAttribute('disabled', 'disabled');
+//     fieldCapacity.options[1].setAttribute('disabled', 'disabled');
+//     fieldCapacity.options[2].setAttribute('disabled', 'disabled');
+//     fieldCapacity.value = 0;
+//   }
+// });
