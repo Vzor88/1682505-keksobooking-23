@@ -1,4 +1,4 @@
-import {getRandInt, getRandFloat} from './util.js';
+import {getRandInt, getRandFloat} from './utils.js';
 
 const TITLES = [
   'Сдаётся номер для молодожёнов',
