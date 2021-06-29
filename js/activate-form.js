@@ -30,4 +30,8 @@ function activateForm(){
   getAttributeRemoveDisabled(elementsForm);
 }
 
-export {deactivateForm, activateForm, generalForm};
+if (generalForm) {
+  deactivateForm();
+}
+
+export {activateForm};

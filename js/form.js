@@ -1,3 +1,5 @@
+import {mainPinMarker} from './map.js';
+
 const resetForm = document.querySelector('.ad-form__reset');
 const entryFieldTitle = document.querySelector('#title');
 const entryFieldPrice = document.querySelector('#price');
@@ -11,9 +13,9 @@ const parentCapacity = document.querySelector('.ad-form__element--capacity');
 const selectsList = document.querySelectorAll('.map__filter');
 const checkboxesList = document.querySelectorAll('.map__checkbox');
 
-const COORDINATES = {
-  LATITUDE: 35.6895,
-  LONGITUDE: 139.692,
+const DEFAULT_COORDINATES = {
+  LATITUDE: 35.68950,
+  LONGITUDE: 139.69171,
 };
 
 const LENGTH_FIELD_TITLE = {
@@ -32,7 +34,7 @@ const FIELD_PRICE = {
   },
 };
 
-function isResetFilters(arraySelects, arrayCheckboxes) {
+function isResetElements(arraySelects, arrayCheckboxes) {
   arraySelects.forEach((item) => item.options[0].selected = true);
   arrayCheckboxes.forEach((item) => item.checked = false);
 }
@@ -45,11 +47,6 @@ function determinationMinPrice() {
     }
   }
 }
-
-resetForm.addEventListener('click', () => {
-  entryFieldTitle.textContent = ' ';
-  isResetFilters(selectsList, checkboxesList);
-});
 
 entryFieldTitle.addEventListener('input', () => {
   const valueLength = entryFieldTitle.value.length;
@@ -118,7 +115,7 @@ function isMatchingFields(){
 }
 
 function defaultFieldAddress(){
-  fieldAddress.value = `${COORDINATES.LATITUDE}, ${COORDINATES.LONGITUDE}`;
+  fieldAddress.setAttribute('value', `${Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5)}, ${Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5)}`);
   fieldAddress.setAttribute('readonly', 'readonly');
 }
 
@@ -128,3 +125,15 @@ fieldRooms.addEventListener('change', () => {
 
 document.addEventListener('DOMContentLoaded', isMatchingFields);
 document.addEventListener('DOMContentLoaded', defaultFieldAddress);
+
+resetForm.addEventListener('click', () => {
+  entryFieldTitle.value = '';
+  isResetElements(selectsList, checkboxesList);
+  defaultFieldAddress();
+  mainPinMarker.setLatLng({
+    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5),
+    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5),
+  });
+});
+
+export {DEFAULT_COORDINATES, fieldAddress};
