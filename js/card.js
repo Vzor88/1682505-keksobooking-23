@@ -1,5 +1,10 @@
 import {createAdvert, ADVERT_COUNT} from './data.js';
 
+const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
+const setAdverts = () => new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
+const buildAdvert = setAdverts();
+const buildListFragment = document.createDocumentFragment();
+
 function getDisplayFeaturesList(array, itemList) {
   const modifiers = array.map((feature) => `popup__feature--${feature}`);
   itemList.querySelectorAll('.popup__feature').forEach((element) => {
@@ -40,12 +45,6 @@ function checkingEmptyElement(selector, element) {
   return (!element) ? selector.textContent = '' : element;
 }
 
-const buildCardList = document.querySelector('#map-canvas');
-const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
-const setAdverts = () => new Array(ADVERT_COUNT).fill(null).map((value,index) => createAdvert(index + 1));
-const buildAdvert = setAdverts();
-const buildListFragment = document.createDocumentFragment();
-
 buildAdvert.forEach((advert) => {
   const buildItemCard = buildAdvertTemplate.cloneNode(true);
   buildItemCard.querySelector('.popup__avatar').src = advert.author.avatar;
@@ -65,6 +64,5 @@ buildAdvert.forEach((advert) => {
 });
 
 const listElements = buildListFragment.querySelectorAll('.popup');
-buildCardList.appendChild(listElements[0]);
 
-export {setAdverts};
+export {setAdverts, buildAdvert, listElements};

@@ -89,6 +89,10 @@ fieldset {
   background-color: #dddddd;
 }
 
+.map__canvas-container {
+  width: 100%;
+  height: 500px;
+}
 
 /**
  * Фильтры объявления

@@ -1,3 +1,5 @@
+import {mainPinMarker} from './map.js';
+
 const resetForm = document.querySelector('.ad-form__reset');
 const entryFieldTitle = document.querySelector('#title');
 const entryFieldPrice = document.querySelector('#price');
@@ -6,51 +8,52 @@ const fieldRooms = document.querySelector('#room_number');
 const fieldCapacity = document.querySelector('#capacity');
 const fieldTimeIn = document.querySelector('#timein');
 const fieldTimeOut = document.querySelector('#timeout');
+const fieldAddress = document.querySelector('#address');
 const parentCapacity = document.querySelector('.ad-form__element--capacity');
 const selectsList = document.querySelectorAll('.map__filter');
 const checkboxesList = document.querySelectorAll('.map__checkbox');
-let minPrice = 1000;
 
-const MIN_LENGTH_TITLE = 30;
-const MAX_LENGTH_TITLE = 100;
-const MAX_PRICE = 1000000;
+const DEFAULT_COORDINATES = {
+  LATITUDE: 35.68950,
+  LONGITUDE: 139.69171,
+};
 
-function isResetFilters(arraySelects, arrayCheckboxes) {
+const LENGTH_FIELD_TITLE = {
+  MIN: 30,
+  MAX: 100,
+};
+
+const FIELD_PRICE = {
+  MAX_PRICE: 1000000,
+  MIN_PRICE: {
+    'bungalow': 0,
+    'flat': 1000,
+    'hotel': 3000,
+    'house': 5000,
+    'palace': 10000,
+  },
+};
+
+function isResetElements(arraySelects, arrayCheckboxes) {
   arraySelects.forEach((item) => item.options[0].selected = true);
   arrayCheckboxes.forEach((item) => item.checked = false);
 }
 
-function determinationMinPrice(typeProperty) {
-  if(typeProperty === 'bungalow') {
-    entryFieldPrice.setAttribute('placeholder','больше 0');
-    minPrice = 0;
-  } else if(typeProperty === 'flat') {
-    entryFieldPrice.setAttribute('placeholder','1000');
-    minPrice = 1000;
-  } else if(typeProperty === 'hotel') {
-    entryFieldPrice.setAttribute('placeholder','3000');
-    minPrice = 3000;
-  } else if(typeProperty === 'house') {
-    entryFieldPrice.setAttribute('placeholder','5000');
-    minPrice = 5000;
-  } else if(typeProperty === 'palace') {
-    entryFieldPrice.setAttribute('placeholder','10000');
-    minPrice = 10000;
+function determinationMinPrice() {
+  for(const typeProperty in FIELD_PRICE.MIN_PRICE){
+    if(entryFieldType.value === typeProperty) {
+      entryFieldPrice.setAttribute('placeholder', FIELD_PRICE.MIN_PRICE[entryFieldType.value]);
+      return FIELD_PRICE.MIN_PRICE[entryFieldType.value];
+    }
   }
-  return minPrice;
 }
-
-resetForm.addEventListener('click', () => {
-  entryFieldTitle.textContent = ' ';
-  isResetFilters(selectsList, checkboxesList);
-});
 
 entryFieldTitle.addEventListener('input', () => {
   const valueLength = entryFieldTitle.value.length;
-  if (valueLength < MIN_LENGTH_TITLE) {
-    entryFieldTitle.setCustomValidity(`Ещё необходимо ${MIN_LENGTH_TITLE - valueLength } символов`);
-  } else if (valueLength > MAX_LENGTH_TITLE) {
-    entryFieldTitle.setCustomValidity(`Удалите лишние ${valueLength - MAX_LENGTH_TITLE} символов`);
+  if (valueLength < LENGTH_FIELD_TITLE.MIN) {
+    entryFieldTitle.setCustomValidity(`Ещё необходимо ${LENGTH_FIELD_TITLE.MIN - valueLength } символов`);
+  } else if (valueLength > LENGTH_FIELD_TITLE.MAX) {
+    entryFieldTitle.setCustomValidity(`Удалите лишние ${valueLength - LENGTH_FIELD_TITLE.MAX} символов`);
   } else {
     entryFieldTitle.setCustomValidity('');
   }
@@ -58,15 +61,16 @@ entryFieldTitle.addEventListener('input', () => {
 });
 
 entryFieldType.addEventListener('change',() => {
-  determinationMinPrice(entryFieldType.value);
+  determinationMinPrice();
+  entryFieldPrice.value = '';
 });
 
 entryFieldPrice.addEventListener('input', () => {
   const valuePrice = entryFieldPrice.value;
-  if(valuePrice > MAX_PRICE) {
-    entryFieldPrice.setCustomValidity(`Цена должна быть меньше на ${valuePrice - MAX_PRICE}`);
-  } else if (valuePrice < determinationMinPrice(entryFieldType.value)) {
-    entryFieldPrice.setCustomValidity(`Цена должна быть больше на ${determinationMinPrice(entryFieldType.value) - valuePrice}`);
+  if(valuePrice > FIELD_PRICE.MAX_PRICE) {
+    entryFieldPrice.setCustomValidity(`Цена должна быть меньше на ${valuePrice - FIELD_PRICE.MAX_PRICE}`);
+  } else if (valuePrice < determinationMinPrice()) {
+    entryFieldPrice.setCustomValidity(`Цена должна быть больше на ${determinationMinPrice() - valuePrice}`);
   } else {
     entryFieldPrice.setCustomValidity('');
   }
@@ -82,15 +86,15 @@ fieldTimeOut.addEventListener('change', () => {
 });
 
 
-function isResetFieldCapacity(list) {  // Правильность данной функции у меня вызывают сомнения, но это единственный придуманный мной вариант,
-  parentCapacity.appendChild(list);    // как сделать так чтобы выпадающий список гостей сначало полностью удалялся ,а потом добавлялась копия "целого" списка
+function isResetFieldCapacity(list) {
+  parentCapacity.appendChild(list);
   list.classList.add('capacity');
   document.querySelector('.capacity').remove();
   fieldCapacity.remove();
   parentCapacity.appendChild(list);
 }
 
-fieldRooms.addEventListener('change', () => {
+function isMatchingFields(){
   const newFieldCapacity = fieldCapacity.cloneNode(true);
   const listCapacity = Array.from(newFieldCapacity);
   isResetFieldCapacity(newFieldCapacity);
@@ -108,29 +112,28 @@ fieldRooms.addEventListener('change', () => {
     listCapacity[1].remove();
     listCapacity[2].remove();
   }
+}
+
+function defaultFieldAddress(){
+  fieldAddress.setAttribute('value', `${Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5)}, ${Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5)}`);
+  fieldAddress.setAttribute('readonly', 'readonly');
+}
+
+fieldRooms.addEventListener('change', () => {
+  isMatchingFields();
 });
 
-// вариант этого же события через блокировку options
+document.addEventListener('DOMContentLoaded', isMatchingFields);
+document.addEventListener('DOMContentLoaded', defaultFieldAddress);
 
-// fieldRooms.addEventListener('change', () => {
-//   const listCapacity = Array.from(fieldCapacity);
-//   listCapacity.forEach((item) => item.removeAttribute('disabled'));
-//   if(fieldRooms.value === '1') {
-//     fieldCapacity.options[0].setAttribute('disabled', 'disabled');
-//     fieldCapacity.options[1].setAttribute('disabled', 'disabled');
-//     fieldCapacity.options[3].setAttribute('disabled', 'disabled');
-//     fieldCapacity.value = 1;
-//   } else if (fieldRooms.value === '2') {
-//     fieldCapacity.options[0].setAttribute('disabled', 'disabled');
-//     fieldCapacity.options[3].setAttribute('disabled', 'disabled');
-//     fieldCapacity.value = 2;
-//   } else if (fieldRooms.value === '3') {
-//     fieldCapacity.options[3].setAttribute('disabled', 'disabled');
-//     fieldCapacity.value = 3;
-//   } else {
-//     fieldCapacity.options[0].setAttribute('disabled', 'disabled');
-//     fieldCapacity.options[1].setAttribute('disabled', 'disabled');
-//     fieldCapacity.options[2].setAttribute('disabled', 'disabled');
-//     fieldCapacity.value = 0;
-//   }
-// });
+resetForm.addEventListener('click', () => {
+  entryFieldTitle.value = '';
+  isResetElements(selectsList, checkboxesList);
+  defaultFieldAddress();
+  mainPinMarker.setLatLng({
+    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5),
+    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5),
+  });
+});
+
+export {DEFAULT_COORDINATES, fieldAddress};
