@@ -1,6 +1,11 @@
 import {mainPinMarker} from './map.js';
+import {isEscEvent} from './utils.js';
+import {sendData} from './api.js';
 
 const resetForm = document.querySelector('.ad-form__reset');
+const submitForm = document.querySelector('.ad-form');
+const successMessage = document.querySelector('#success').content.querySelector('.success');
+const errorMessage = document.querySelector('#error').content.querySelector('.error');
 const entryFieldTitle = document.querySelector('#title');
 const entryFieldPrice = document.querySelector('#price');
 const entryFieldType = document.querySelector('#type');
@@ -135,5 +140,37 @@ resetForm.addEventListener('click', () => {
     lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5),
   });
 });
+
+function outputMessage (element) {
+  document.body.appendChild(element);
+  document.addEventListener('keydown', (evt) => {
+    if (isEscEvent(evt)) {
+      element.remove();
+      if(element === successMessage) {
+        resetForm.click();
+      }
+    }
+  });
+  element.addEventListener('click', (evt) => {
+    if (evt.target) {
+      element.remove();
+      if(element === successMessage) {
+        resetForm.click();
+      }
+    }
+  });
+  document.removeEventListener('keydown', (outputMessage));
+  document.removeEventListener('click', (outputMessage));
+}
+
+submitForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  sendData(
+    () => outputMessage(successMessage),
+    () => outputMessage(errorMessage),
+    new FormData(evt.target),
+  );
+});
+
 
 export {DEFAULT_COORDINATES, fieldAddress};

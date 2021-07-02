@@ -1,7 +1,6 @@
 import {myMap} from './map.js';
 
 const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
-
 const buildListFragment = document.createDocumentFragment();
 
 function getDisplayFeaturesList(array, itemList) {
@@ -72,7 +71,10 @@ function renderAdvertList(buildAdvert) {
       iconSize: [40, 40],
       iconAnchor: [20, 40],
     });
-    const blueMarker = L.marker({lat: advert.location.lat, lng: advert.location.lng},
+    const blueMarker = L.marker(
+      { lat: advert.location.lat,
+        lng: advert.location.lng,
+      },
       {
         icon: pinBlueIcon,
       });
