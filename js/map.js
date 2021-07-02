@@ -1,6 +1,5 @@
 import {DEFAULT_COORDINATES, fieldAddress} from './form.js';
 import {activateForm} from './activate-form.js';
-import {buildAdvert, listElements} from './card.js';
 
 const myMap = L.map('map-interactive')
   .on('load', () => {
@@ -18,7 +17,7 @@ L.tileLayer(
   },
 ).addTo(myMap);
 
-const mainPinIcon = L.icon({
+const mainRedIcon = L.icon({
   iconUrl: '../../img/main-pin.svg',
   iconSize: [52, 52],
   iconAnchor: [26, 52],
@@ -31,7 +30,7 @@ const mainPinMarker = L.marker(
   },
   {
     draggable: true,
-    icon: mainPinIcon,
+    icon: mainRedIcon,
   },
 );
 
@@ -41,22 +40,4 @@ mainPinMarker.on('moveend', (evt) => {
   fieldAddress.value = `${Number(evt.target.getLatLng().lat).toFixed(5)}, ${Number(evt.target.getLatLng().lng).toFixed(5)}`;
 });
 
-buildAdvert.forEach((item,index)  => {
-  const pinBlueIcon = L.icon({
-    iconUrl: '../../img/pin.svg',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
-  const blueMarker = L.marker({
-    lat: item.location.lat,
-    lng: item.location.lng,
-  },
-  {
-    icon: pinBlueIcon,
-  });
-  blueMarker
-    .addTo(myMap)
-    .bindPopup(listElements[index]);
-});
-
-export {mainPinMarker};
+export {mainPinMarker, myMap};
