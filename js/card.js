@@ -1,10 +1,11 @@
 import {myMap} from './map.js';
+import {getAttributeRemoveDisabled, filtersFormArray} from './activate-form.js';
 
 const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
 const buildListFragment = document.createDocumentFragment();
 
 function getDisplayFeaturesList(array, itemList) {
-  if(array) {
+  if(Array.isArray(array)) {
     const modifiers = array.map((feature) => `popup__feature--${feature}`);
     itemList.querySelectorAll('.popup__feature').forEach((element) => {
       const modifier = element.classList[1];
@@ -18,7 +19,7 @@ function getDisplayFeaturesList(array, itemList) {
 }
 
 function getDisplayPhotosList (array, itemList){
-  if(array) {
+  if(Array.isArray(array)) {
     const photosItem = itemList.querySelector('.popup__photo');
     photosItem.remove();
     array.forEach((string) => {
@@ -82,6 +83,7 @@ function renderAdvertList(buildAdvert) {
       .addTo(myMap)
       .bindPopup(buildItemCard);
   });
+  getAttributeRemoveDisabled(filtersFormArray);
 }
 
 export {renderAdvertList};

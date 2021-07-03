@@ -17,16 +17,11 @@ function getAttributeRemoveDisabled(array) {
 }
 
 function deactivateForm(){
-  generalForm.classList.add('ad-form--disabled');
-  filtersForm.classList.add('ad-form--disabled');
   getAttributeAddDisabled(filtersFormArray);
   getAttributeAddDisabled(elementsForm);
 }
 
 function activateForm(){
-  generalForm.classList.remove('ad-form--disabled');
-  filtersForm.classList.remove('ad-form--disabled');
-  getAttributeRemoveDisabled(filtersFormArray);
   getAttributeRemoveDisabled(elementsForm);
 }
 
@@ -34,4 +29,4 @@ if (generalForm) {
   deactivateForm();
 }
 
-export {activateForm};
+export {activateForm, getAttributeRemoveDisabled, filtersFormArray};
