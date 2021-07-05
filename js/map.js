@@ -40,4 +40,6 @@ mainPinMarker.on('moveend', (evt) => {
   fieldAddress.value = `${Number(evt.target.getLatLng().lat).toFixed(5)}, ${Number(evt.target.getLatLng().lng).toFixed(5)}`;
 });
 
-export {mainPinMarker, myMap};
+const markerGroup = L.layerGroup().addTo(myMap);
+
+export {mainPinMarker,markerGroup};

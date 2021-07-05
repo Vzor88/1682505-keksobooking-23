@@ -15,8 +15,8 @@ const fieldTimeIn = document.querySelector('#timein');
 const fieldTimeOut = document.querySelector('#timeout');
 const fieldAddress = document.querySelector('#address');
 const parentCapacity = document.querySelector('.ad-form__element--capacity');
-const selectsList = document.querySelectorAll('.map__filter');
-const checkboxesList = document.querySelectorAll('.map__checkbox');
+const selectsListFilters = document.querySelectorAll('.map__filter');
+const checkboxesListFilters = document.querySelectorAll('.map__checkbox');
 
 const DEFAULT_COORDINATES = {
   LATITUDE: 35.68950,
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', defaultFieldAddress);
 
 resetForm.addEventListener('click', () => {
   entryFieldTitle.value = '';
-  isResetElements(selectsList, checkboxesList);
+  isResetElements(selectsListFilters, checkboxesListFilters);
   defaultFieldAddress();
   mainPinMarker.setLatLng({
     lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5),
@@ -173,4 +173,4 @@ submitForm.addEventListener('submit', (evt) => {
 });
 
 
-export {DEFAULT_COORDINATES, fieldAddress};
+export {DEFAULT_COORDINATES, fieldAddress, checkboxesListFilters, selectsListFilters};

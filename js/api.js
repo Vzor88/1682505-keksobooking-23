@@ -2,7 +2,13 @@ const BASE_URL = 'https://23.javascript.pages.academy/keksobooking';
 
 const getData = (onSuccess, onFail) => {
   fetch(`${BASE_URL}/data`)
-    .then((response) => response.json())
+    .then((response) => {
+      if( response.ok) {
+        return response.json();
+      } else {
+        onFail();
+      }
+    })
     .then((adverts) => {
       onSuccess(adverts);
     })
