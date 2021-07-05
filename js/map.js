@@ -1,4 +1,4 @@
-import {DEFAULT_COORDINATES, fieldAddress} from './form.js';
+import {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER} from './form.js';
 import {activateForm} from './activate-form.js';
 
 const myMap = L.map('map-interactive')
@@ -6,8 +6,8 @@ const myMap = L.map('map-interactive')
     activateForm();
   })
   .setView({
-    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5),
-    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5),
+    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
+    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
   }, 12);
 
 L.tileLayer(
@@ -25,8 +25,8 @@ const mainRedIcon = L.icon({
 
 const mainPinMarker = L.marker(
   {
-    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5),
-    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5),
+    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
+    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
   },
   {
     draggable: true,
@@ -37,7 +37,9 @@ const mainPinMarker = L.marker(
 mainPinMarker.addTo(myMap);
 
 mainPinMarker.on('moveend', (evt) => {
-  fieldAddress.value = `${Number(evt.target.getLatLng().lat).toFixed(5)}, ${Number(evt.target.getLatLng().lng).toFixed(5)}`;
+  fieldAddress.value = `${Number(evt.target.getLatLng().lat).toFixed(FLOATING_POINT_NUMBER)}, ${Number(evt.target.getLatLng().lng).toFixed(FLOATING_POINT_NUMBER)}`;
 });
 
-export {mainPinMarker, myMap};
+const markerGroup = L.layerGroup().addTo(myMap);
+
+export {mainPinMarker,markerGroup};

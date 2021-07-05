@@ -1,20 +1,25 @@
-import {renderAdvertList} from './card.js';
-import {showAlert} from './utils.js';
+const BASE_URL = 'https://23.javascript.pages.academy/keksobooking';
 
-const getData = () => {
-  fetch('https://23.javascript.pages.academy/keksobooking/data')
-    .then((response) => response.json())
+const getData = (onSuccess, onFail) => {
+  fetch(`${BASE_URL}/data`)
+    .then((response) => {
+      if( response.ok) {
+        return response.json();
+      } else {
+        onFail();
+      }
+    })
     .then((adverts) => {
-      renderAdvertList(adverts);
+      onSuccess(adverts);
     })
     .catch(() => {
-      showAlert(' Не удалось получить данные с сервера. Попробуйте ещё раз ');
+      onFail();
     });
 };
 
 const sendData = (onSuccess, onFail, body) => {
   fetch(
-    'https://23.javascript.pages.academy/keksobooking',
+    BASE_URL,
     {
       method:'POST',
       body,
