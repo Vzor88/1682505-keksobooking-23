@@ -1,4 +1,4 @@
-import {checkboxesListFilters, selectsListFilters} from './form.js';
+import {filtersFormArray} from './activate-form.js';
 
 const fieldFiltersType = document.querySelector('#housing-type');
 const fieldFiltersPrice = document.querySelector('#housing-price');
@@ -50,20 +50,12 @@ function getFiltersFeatures(element) {
   });
 }
 
-const selectsFilters = (callback) => {
-  selectsListFilters.forEach((item) => {
+const filtersElements = (callback) => {
+  filtersFormArray.forEach((item) => {
     item.addEventListener('change', () => {
       callback();
     });
   });
 };
 
-const filtersFeatures = (callback) => {
-  checkboxesListFilters.forEach((item) => {
-    item.addEventListener('change', () => {
-      callback();
-    });
-  });
-};
-
-export {getFiltersType, getFiltersPrice, getFiltersRooms, getFiltersGuests, getFiltersFeatures, selectsFilters, filtersFeatures};
+export {getFiltersType, getFiltersPrice, getFiltersRooms, getFiltersGuests, getFiltersFeatures, filtersElements};

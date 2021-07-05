@@ -18,6 +18,8 @@ const parentCapacity = document.querySelector('.ad-form__element--capacity');
 const selectsListFilters = document.querySelectorAll('.map__filter');
 const checkboxesListFilters = document.querySelectorAll('.map__checkbox');
 
+const FLOATING_POINT_NUMBER = 5;
+
 const DEFAULT_COORDINATES = {
   LATITUDE: 35.68950,
   LONGITUDE: 139.69171,
@@ -120,7 +122,7 @@ function isMatchingFields(){
 }
 
 function defaultFieldAddress(){
-  fieldAddress.setAttribute('value', `${Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5)}, ${Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5)}`);
+  fieldAddress.setAttribute('value', `${Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER)}, ${Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER)}`);
   fieldAddress.setAttribute('readonly', 'readonly');
 }
 
@@ -136,8 +138,8 @@ resetForm.addEventListener('click', () => {
   isResetElements(selectsListFilters, checkboxesListFilters);
   defaultFieldAddress();
   mainPinMarker.setLatLng({
-    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(5),
-    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(5),
+    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
+    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
   });
 });
 
@@ -173,4 +175,4 @@ submitForm.addEventListener('submit', (evt) => {
 });
 
 
-export {DEFAULT_COORDINATES, fieldAddress, checkboxesListFilters, selectsListFilters};
+export {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER};

@@ -4,6 +4,7 @@ import {getFiltersType, getFiltersPrice, getFiltersRooms, getFiltersGuests, getF
 
 const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
 const buildListFragment = document.createDocumentFragment();
+const COUNT_ADVERTS = 10;
 
 function getDisplayFeaturesList(array, itemList) {
   if(Array.isArray(array)) {
@@ -37,8 +38,7 @@ function getRandRooms(count) {
   let descriptionRooms = `${count} комнат`;
   if(count === 1) {
     descriptionRooms = `${count} комната`;
-  }
-  if(count >= 2 && count < 5 ) {
+  } else if (count >= 2 && count < 5 ) {
     descriptionRooms = `${count} комнаты`;
   }
   return descriptionRooms;
@@ -61,7 +61,7 @@ function renderAdvertList(buildAdvert) {
     .filter(getFiltersRooms)
     .filter(getFiltersGuests)
     .filter(getFiltersFeatures)
-    .slice(0, 10)
+    .slice(0, COUNT_ADVERTS)
     .forEach((advert) => {
       const buildItemCard = buildAdvertTemplate.cloneNode(true);
       buildItemCard.querySelector('.popup__avatar').src = advert.author.avatar;

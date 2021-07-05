@@ -1,8 +1,7 @@
 const filtersForm = document.querySelector('.map__filters');
 const generalForm = document.querySelector('.ad-form');
 const elementsForm = generalForm.querySelectorAll('fieldset');
-const filtersFormElements = filtersForm.children;
-const filtersFormArray = Array.from(filtersFormElements);
+const filtersFormArray = Array.from(filtersForm.children);
 
 function getAttributeAddDisabled(array) {
   array.forEach((element) => {
