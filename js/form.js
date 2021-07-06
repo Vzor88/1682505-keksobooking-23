@@ -1,6 +1,7 @@
 import {mainPinMarker} from './map.js';
 import {isEscEvent} from './utils.js';
 import {sendData} from './api.js';
+import {avatarPreview} from './image.js';
 
 const resetForm = document.querySelector('.ad-form__reset');
 const submitForm = document.querySelector('.ad-form');
@@ -19,6 +20,7 @@ const selectsListFilters = document.querySelectorAll('.map__filter');
 const checkboxesListFilters = document.querySelectorAll('.map__checkbox');
 
 const FLOATING_POINT_NUMBER = 5;
+const URL_DEFAULT_AVATAR = 'img/muffin-grey.svg';
 
 const DEFAULT_COORDINATES = {
   LATITUDE: 35.68950,
@@ -133,6 +135,14 @@ fieldRooms.addEventListener('change', () => {
 document.addEventListener('DOMContentLoaded', isMatchingFields);
 document.addEventListener('DOMContentLoaded', defaultFieldAddress);
 
+function defaultPicture() {
+  avatarPreview.src = URL_DEFAULT_AVATAR;
+  const images = document.querySelectorAll('.ad-form__photo-picture');
+  images.forEach((image) => {
+    image.remove();
+  });
+}
+
 resetForm.addEventListener('click', () => {
   entryFieldTitle.value = '';
   isResetElements(selectsListFilters, checkboxesListFilters);
@@ -141,6 +151,7 @@ resetForm.addEventListener('click', () => {
     lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
     lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
   });
+  defaultPicture();
 });
 
 function outputMessage (element) {
