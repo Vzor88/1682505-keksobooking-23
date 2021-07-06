@@ -2,6 +2,7 @@ import './activate-form.js';
 import './map.js';
 import './card.js';
 import './form.js';
+import './image.js';
 import {getData} from './api.js';
 import {renderAdvertList} from './card.js';
 import {showAlert} from './utils.js';
