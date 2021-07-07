@@ -3,26 +3,30 @@ const generalForm = document.querySelector('.ad-form');
 const elementsForm = generalForm.querySelectorAll('fieldset');
 const filtersFormArray = Array.from(filtersForm.children);
 
-function getAttributeAddDisabled(array) {
+const getAttributeAddDisabled = (array) => {
   array.forEach((element) => {
     element.setAttribute('disabled', 'disabled');
   });
-}
+};
 
-function getAttributeRemoveDisabled(array) {
+const getAttributeRemoveDisabled = (array) => {
   array.forEach((element) => {
     element.removeAttribute('disabled');
   });
-}
+};
 
-function deactivateForm(){
+const deactivateForm = () => {
+  generalForm.classList.add('ad-form__disabled');
+  filtersForm.classList.add('ad-form__disabled');
   getAttributeAddDisabled(filtersFormArray);
   getAttributeAddDisabled(elementsForm);
-}
+};
 
-function activateForm(){
+const activateForm = () => {
   getAttributeRemoveDisabled(elementsForm);
-}
+  generalForm.classList.remove('ad-form__disabled');
+  filtersForm.classList.remove('ad-form__disabled');
+};
 
 if (generalForm) {
   deactivateForm();

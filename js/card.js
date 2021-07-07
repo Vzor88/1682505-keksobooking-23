@@ -1,27 +1,27 @@
-import {markerGroup} from './map.js';
-import {getAttributeRemoveDisabled, filtersFormArray} from './activate-form.js';
-import {getFiltersType, getFiltersPrice, getFiltersRooms, getFiltersGuests, getFiltersFeatures} from './filters.js';
+import {markerGroup, addMapMarker} from './map.js';
+import {filtersFormArray, getAttributeRemoveDisabled} from './activate-form.js';
+import {getFiltersFeatures, getFiltersGuests, getFiltersPrice, getFiltersRooms, getFiltersType} from './filters.js';
 
 const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
 const buildListFragment = document.createDocumentFragment();
 const COUNT_ADVERTS = 10;
 
-function getDisplayFeaturesList(array, itemList) {
-  if(Array.isArray(array)) {
-    const modifiers = array.map((feature) => `popup__feature--${feature}`);
-    itemList.querySelectorAll('.popup__feature').forEach((element) => {
+const getDisplayFeaturesList = (array, itemList) => {
+  if (Array.isArray(array)) {
+    const modifiers = array.map ((feature) => `popup__feature--${feature}`);
+    itemList.querySelectorAll ('.popup__feature').forEach ((element) => {
       const modifier = element.classList[1];
-      if(!modifiers.includes(modifier)) {
+      if (!modifiers.includes(modifier)) {
         element.remove();
       }
     });
   } else {
     itemList.remove();
   }
-}
+};
 
-function getDisplayPhotosList (array, itemList){
-  if(Array.isArray(array)) {
+const getDisplayPhotosList = (array, itemList) => {
+  if (Array.isArray(array)) {
     const photosItem = itemList.querySelector('.popup__photo');
     photosItem.remove();
     array.forEach((string) => {
@@ -32,36 +32,27 @@ function getDisplayPhotosList (array, itemList){
   } else {
     itemList.remove();
   }
-}
+};
 
-function getRandRooms(count) {
+const getRandRooms = (count) => {
   let descriptionRooms = `${count} комнат`;
-  if(count === 1) {
+  if (count === 1) {
     descriptionRooms = `${count} комната`;
   } else if (count >= 2 && count < 5 ) {
     descriptionRooms = `${count} комнаты`;
   }
   return descriptionRooms;
-}
+};
 
-function getRandGuests(count) {
-  return (count === 1) ? `${count} гостя` : `${count} гостей`;
-}
+const getRandGuests = (count) => (count === 1) ? `${count} гостя` : `${count} гостей`;
 
-function checkingEmptyElement(selector, element) {
-  return (!element) ? selector.textContent = '' : element;
-}
+const checkingEmptyElement = (selector, element) => (!element) ? selector.textContent = '' : element;
 
-function renderAdvertList(buildAdvert) {
+const getFiltersAdvert = (array) => array.slice().filter(getFiltersType).filter(getFiltersPrice).filter(getFiltersRooms).filter(getFiltersGuests).filter(getFiltersFeatures).slice(0, COUNT_ADVERTS);
+
+const renderAdvertList = (buildAdvert) => {
   markerGroup.clearLayers();
-  buildAdvert
-    .slice( )
-    .filter(getFiltersType)
-    .filter(getFiltersPrice)
-    .filter(getFiltersRooms)
-    .filter(getFiltersGuests)
-    .filter(getFiltersFeatures)
-    .slice(0, COUNT_ADVERTS)
+  getFiltersAdvert(buildAdvert)
     .forEach((advert) => {
       const buildItemCard = buildAdvertTemplate.cloneNode(true);
       buildItemCard.querySelector('.popup__avatar').src = advert.author.avatar;
@@ -77,23 +68,9 @@ function renderAdvertList(buildAdvert) {
       buildItemCard.querySelector('.popup__description').textContent = advert.offer.description;
       getDisplayPhotosList(advert.offer.photos, buildItemCard.querySelector('.popup__photos'));
       buildListFragment.appendChild(buildItemCard);
-      const pinBlueIcon = L.icon({
-        iconUrl: '../../img/pin.svg',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-      });
-      const blueMarker = L.marker(
-        { lat: advert.location.lat,
-          lng: advert.location.lng,
-        },
-        {
-          icon: pinBlueIcon,
-        });
-      blueMarker
-        .addTo(markerGroup)
-        .bindPopup(buildItemCard);
+      addMapMarker(advert.location.lat, advert.location.lng, buildItemCard);
     });
   getAttributeRemoveDisabled(filtersFormArray);
-}
+};
 
 export {renderAdvertList};

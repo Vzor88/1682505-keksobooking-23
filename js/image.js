@@ -5,37 +5,34 @@ const loadPicture = document.querySelector('#images');
 const avatarPreview = document.querySelector('.ad-form-header__preview-image');
 const picturePreview = document.querySelector('.ad-form__photo');
 
-loadAvatar.addEventListener('change', () => {
-  const file = loadAvatar.files[0];
+const getLoadFiles = (fieldLoad, fieldPreview) => {
+  const file = fieldLoad.files[0];
   const fileName = file.name.toLowerCase();
   const matches = FILE_TYPES.some((string) => fileName.endsWith(string));
 
-  if(matches) {
+  if (matches) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
-      avatarPreview.src = reader.result;
+      fieldPreview.src = reader.result;
+      if (fieldLoad === loadPicture) {
+        const addImage = document.createElement('img');
+        addImage.classList.add('ad-form__photo-picture');
+        addImage.style.width = '70px';
+        addImage.style.height = '70px';
+        addImage.src = reader.result;
+        fieldPreview.appendChild(addImage);
+      }
     });
     reader.readAsDataURL(file);
   }
+};
+
+loadAvatar.addEventListener('change', () => {
+  getLoadFiles(loadAvatar, avatarPreview);
 });
 
 loadPicture.addEventListener('change', () => {
-  const file = loadPicture.files[0];
-  const fileName = file.name.toLowerCase();
-  const matches = FILE_TYPES.some((string) => fileName.endsWith(string));
-
-  if(matches) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      const addImage = document.createElement('img');
-      addImage.classList.add('ad-form__photo-picture');
-      addImage.style.width = '70px';
-      addImage.style.height = '70px';
-      addImage.src = reader.result;
-      picturePreview.appendChild(addImage);
-    });
-    reader.readAsDataURL(file);
-  }
+  getLoadFiles(loadPicture, picturePreview);
 });
 
 export {avatarPreview};

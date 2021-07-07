@@ -7,9 +7,9 @@ const resetForm = document.querySelector('.ad-form__reset');
 const submitForm = document.querySelector('.ad-form');
 const successMessage = document.querySelector('#success').content.querySelector('.success');
 const errorMessage = document.querySelector('#error').content.querySelector('.error');
-const entryFieldTitle = document.querySelector('#title');
-const entryFieldPrice = document.querySelector('#price');
-const entryFieldType = document.querySelector('#type');
+const fieldTitle = document.querySelector('#title');
+const fieldPrice = document.querySelector('#price');
+const fieldType = document.querySelector('#type');
 const fieldRooms = document.querySelector('#room_number');
 const fieldCapacity = document.querySelector('#capacity');
 const fieldTimeIn = document.querySelector('#timein');
@@ -33,8 +33,8 @@ const LENGTH_FIELD_TITLE = {
 };
 
 const FIELD_PRICE = {
-  MAX_PRICE: 1000000,
-  MIN_PRICE: {
+  MAX: 1000000,
+  MIN: {
     'bungalow': 0,
     'flat': 1000,
     'hotel': 3000,
@@ -43,71 +43,46 @@ const FIELD_PRICE = {
   },
 };
 
-function isResetElements(arraySelects, arrayCheckboxes) {
+const isResetElements = (arraySelects, arrayCheckboxes) => {
   arraySelects.forEach((item) => item.options[0].selected = true);
   arrayCheckboxes.forEach((item) => item.checked = false);
-}
+};
 
-function determinationMinPrice() {
-  for(const typeProperty in FIELD_PRICE.MIN_PRICE){
-    if(entryFieldType.value === typeProperty) {
-      entryFieldPrice.setAttribute('placeholder', FIELD_PRICE.MIN_PRICE[entryFieldType.value]);
-      return FIELD_PRICE.MIN_PRICE[entryFieldType.value];
-    }
-  }
-}
-
-entryFieldTitle.addEventListener('input', () => {
-  const valueLength = entryFieldTitle.value.length;
-  if (valueLength < LENGTH_FIELD_TITLE.MIN) {
-    entryFieldTitle.setCustomValidity(`Ещё необходимо ${LENGTH_FIELD_TITLE.MIN - valueLength } символов`);
-  } else if (valueLength > LENGTH_FIELD_TITLE.MAX) {
-    entryFieldTitle.setCustomValidity(`Удалите лишние ${valueLength - LENGTH_FIELD_TITLE.MAX} символов`);
-  } else {
-    entryFieldTitle.setCustomValidity('');
-  }
-  entryFieldTitle.reportValidity();
-});
-
-entryFieldType.addEventListener('change',() => {
-  determinationMinPrice();
-  entryFieldPrice.value = '';
-});
-
-entryFieldPrice.addEventListener('input', () => {
-  const valuePrice = entryFieldPrice.value;
-  if(valuePrice > FIELD_PRICE.MAX_PRICE) {
-    entryFieldPrice.setCustomValidity(`Цена должна быть меньше на ${valuePrice - FIELD_PRICE.MAX_PRICE}`);
-  } else if (valuePrice < determinationMinPrice()) {
-    entryFieldPrice.setCustomValidity(`Цена должна быть больше на ${determinationMinPrice() - valuePrice}`);
-  } else {
-    entryFieldPrice.setCustomValidity('');
-  }
-  entryFieldPrice.reportValidity();
-});
-
-fieldTimeIn.addEventListener('change', () => {
-  fieldTimeOut.value = fieldTimeIn.value;
-});
-
-fieldTimeOut.addEventListener('change', () => {
-  fieldTimeIn.value = fieldTimeOut.value;
-});
-
-
-function isResetFieldCapacity(list) {
+const isResetFieldCapacity = (list) => {
   parentCapacity.appendChild(list);
   list.classList.add('capacity');
   document.querySelector('.capacity').remove();
   fieldCapacity.remove();
   parentCapacity.appendChild(list);
-}
+};
 
-function isMatchingFields(){
+const isDefaultFieldAddress = () => {
+  fieldAddress.setAttribute('value', `${Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER)}, ${Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER)}`);
+  fieldAddress.setAttribute('readonly', 'readonly');
+};
+
+const isDefaultPicture = () => {
+  avatarPreview.src = URL_DEFAULT_AVATAR;
+  const images = document.querySelectorAll('.ad-form__photo-picture');
+  images.forEach((image) => {
+    image.remove();
+  });
+};
+
+const determinationMinPrice = () => {
+  for (const typeProperty in FIELD_PRICE.MIN) {
+    if (fieldType.value === typeProperty) {
+      fieldPrice.setAttribute('placeholder', FIELD_PRICE.MIN[fieldType.value]);
+      return FIELD_PRICE.MIN[fieldType.value];
+    }
+  }
+};
+
+const isMatchingFields = () => {
   const newFieldCapacity = fieldCapacity.cloneNode(true);
   const listCapacity = Array.from(newFieldCapacity);
   isResetFieldCapacity(newFieldCapacity);
-  if(fieldRooms.value === '1') {
+  if (fieldRooms.value === '1') {
     listCapacity[0].remove();
     listCapacity[1].remove();
     listCapacity[3].remove();
@@ -121,45 +96,14 @@ function isMatchingFields(){
     listCapacity[1].remove();
     listCapacity[2].remove();
   }
-}
+};
 
-function defaultFieldAddress(){
-  fieldAddress.setAttribute('value', `${Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER)}, ${Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER)}`);
-  fieldAddress.setAttribute('readonly', 'readonly');
-}
-
-fieldRooms.addEventListener('change', () => {
-  isMatchingFields();
-});
-
-document.addEventListener('DOMContentLoaded', isMatchingFields);
-document.addEventListener('DOMContentLoaded', defaultFieldAddress);
-
-function defaultPicture() {
-  avatarPreview.src = URL_DEFAULT_AVATAR;
-  const images = document.querySelectorAll('.ad-form__photo-picture');
-  images.forEach((image) => {
-    image.remove();
-  });
-}
-
-resetForm.addEventListener('click', () => {
-  entryFieldTitle.value = '';
-  isResetElements(selectsListFilters, checkboxesListFilters);
-  defaultFieldAddress();
-  mainPinMarker.setLatLng({
-    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
-    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
-  });
-  defaultPicture();
-});
-
-function outputMessage (element) {
+const getOutputMessage = (element) => {
   document.body.appendChild(element);
   document.addEventListener('keydown', (evt) => {
     if (isEscEvent(evt)) {
       element.remove();
-      if(element === successMessage) {
+      if (element === successMessage) {
         resetForm.click();
       }
     }
@@ -167,23 +111,78 @@ function outputMessage (element) {
   element.addEventListener('click', (evt) => {
     if (evt.target) {
       element.remove();
-      if(element === successMessage) {
+      if (element === successMessage) {
         resetForm.click();
       }
     }
   });
-  document.removeEventListener('keydown', (outputMessage));
-  document.removeEventListener('click', (outputMessage));
-}
+  document.removeEventListener('keydown', (getOutputMessage));
+  document.removeEventListener('click', (getOutputMessage));
+};
+
+fieldTitle.addEventListener('input', () => {
+  const valueLength = fieldTitle.value.length;
+  if (valueLength < LENGTH_FIELD_TITLE.MIN) {
+    fieldTitle.setCustomValidity(`Ещё необходимо ${LENGTH_FIELD_TITLE.MIN - valueLength } символов`);
+  } else if (valueLength > LENGTH_FIELD_TITLE.MAX) {
+    fieldTitle.setCustomValidity(`Удалите лишние ${valueLength - LENGTH_FIELD_TITLE.MAX} символов`);
+  } else {
+    fieldTitle.setCustomValidity('');
+  }
+  fieldTitle.reportValidity();
+});
+
+fieldType.addEventListener('change',() => {
+  determinationMinPrice();
+  fieldPrice.value = '';
+});
+
+fieldPrice.addEventListener('input', () => {
+  const valuePrice = fieldPrice.value;
+  if(valuePrice > FIELD_PRICE.MAX) {
+    fieldPrice.setCustomValidity(`Цена должна быть меньше на ${valuePrice - FIELD_PRICE.MAX}`);
+  } else if (valuePrice < determinationMinPrice()) {
+    fieldPrice.setCustomValidity(`Цена должна быть больше на ${determinationMinPrice() - valuePrice}`);
+  } else {
+    fieldPrice.setCustomValidity('');
+  }
+  fieldPrice.reportValidity();
+});
+
+fieldTimeIn.addEventListener('change', () => {
+  fieldTimeOut.value = fieldTimeIn.value;
+});
+
+fieldTimeOut.addEventListener('change', () => {
+  fieldTimeIn.value = fieldTimeOut.value;
+});
+
+
+fieldRooms.addEventListener('change', () => {
+  isMatchingFields();
+});
+
+resetForm.addEventListener('click', () => {
+  fieldTitle.value = '';
+  isResetElements(selectsListFilters, checkboxesListFilters);
+  isDefaultFieldAddress();
+  mainPinMarker.setLatLng({
+    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
+    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
+  });
+  isDefaultPicture();
+});
 
 submitForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   sendData(
-    () => outputMessage(successMessage),
-    () => outputMessage(errorMessage),
+    () => getOutputMessage(successMessage),
+    () => getOutputMessage(errorMessage),
     new FormData(evt.target),
   );
 });
 
+document.addEventListener('DOMContentLoaded', isMatchingFields);
+document.addEventListener('DOMContentLoaded', isDefaultFieldAddress);
 
 export {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER};

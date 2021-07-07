@@ -1,6 +1,30 @@
 import {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER} from './form.js';
 import {activateForm} from './activate-form.js';
 
+const MAP_ZOOM = 12;
+
+const RED_MARKER = {
+  SIZE: {
+    WIDTH: 52,
+    HEIGHT: 52,
+  },
+  ANCHOR: {
+    WIDTH: 26,
+    HEIGHT: 52,
+  },
+};
+
+const BLUE_MARKER = {
+  SIZE: {
+    WIDTH: 40,
+    HEIGHT: 40,
+  },
+  ANCHOR: {
+    WIDTH: 20,
+    HEIGHT: 52,
+  },
+};
+
 const myMap = L.map('map-interactive')
   .on('load', () => {
     activateForm();
@@ -8,7 +32,7 @@ const myMap = L.map('map-interactive')
   .setView({
     lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
     lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
-  }, 12);
+  }, MAP_ZOOM);
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -19,8 +43,8 @@ L.tileLayer(
 
 const mainRedIcon = L.icon({
   iconUrl: '../../img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconSize: [RED_MARKER.SIZE.WIDTH, RED_MARKER.SIZE.HEIGHT],
+  iconAnchor: [RED_MARKER.ANCHOR.WIDTH, RED_MARKER.ANCHOR.HEIGHT],
 });
 
 const mainPinMarker = L.marker(
@@ -42,4 +66,22 @@ mainPinMarker.on('moveend', (evt) => {
 
 const markerGroup = L.layerGroup().addTo(myMap);
 
-export {mainPinMarker,markerGroup};
+const addMapMarker = (coordinateLat, coordinateLng, itemCard) => {
+  const pinBlueIcon = L.icon({
+    iconUrl: '../../img/pin.svg',
+    iconSize: [BLUE_MARKER.SIZE.WIDTH, BLUE_MARKER.SIZE.HEIGHT],
+    iconAnchor: [BLUE_MARKER.ANCHOR.WIDTH, BLUE_MARKER.ANCHOR.HEIGHT],
+  });
+  const blueMarker = L.marker(
+    { lat: coordinateLat,
+      lng: coordinateLng,
+    },
+    {
+      icon: pinBlueIcon,
+    });
+  blueMarker
+    .addTo(markerGroup)
+    .bindPopup(itemCard);
+};
+
+export {mainPinMarker, markerGroup, addMapMarker};
