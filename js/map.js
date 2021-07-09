@@ -2,6 +2,7 @@ import {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER} from './form.j
 import {activateForm} from './activate-form.js';
 
 const MAP_ZOOM = 12;
+const myMap = L.map('map-interactive');
 
 const RED_MARKER = {
   SIZE: {
@@ -25,14 +26,13 @@ const BLUE_MARKER = {
   },
 };
 
-const myMap = L.map('map-interactive')
-  .on('load', () => {
-    activateForm();
-  })
-  .setView({
-    lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
-    lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
-  }, MAP_ZOOM);
+const loadMap = () => {
+  myMap.on('load', () => activateForm())
+    .setView({
+      lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
+      lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
+    }, MAP_ZOOM);
+};
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -60,8 +60,11 @@ const mainPinMarker = L.marker(
 
 mainPinMarker.addTo(myMap);
 
-mainPinMarker.on('moveend', (evt) => {
-  fieldAddress.value = `${Number(evt.target.getLatLng().lat).toFixed(FLOATING_POINT_NUMBER)}, ${Number(evt.target.getLatLng().lng).toFixed(FLOATING_POINT_NUMBER)}`;
+const getValidCoordinates = (lat, lng) => `${Number(lat).toFixed(FLOATING_POINT_NUMBER)}, ${Number(lng).toFixed(FLOATING_POINT_NUMBER)}`;
+
+
+mainPinMarker.on('move', (evt) => {
+  fieldAddress.value = getValidCoordinates(evt.target.getLatLng().lat, evt.target.getLatLng().lng);
 });
 
 const markerGroup = L.layerGroup().addTo(myMap);
@@ -84,4 +87,4 @@ const addMapMarker = (coordinateLat, coordinateLng, itemCard) => {
     .bindPopup(itemCard);
 };
 
-export {mainPinMarker, markerGroup, addMapMarker};
+export {mainPinMarker, markerGroup, addMapMarker, loadMap};

@@ -11,6 +11,8 @@ const PRICE_FIELD_FILTERS = {
   HIGH: 50000,
 };
 
+const COUNT_ADVERTS = 10;
+
 const getFiltersType = (element) => fieldFiltersType.value === element.offer.type || fieldFiltersType.value === 'any';
 const getFiltersRooms = (element) => fieldFiltersRooms.value === String (element.offer.rooms) || fieldFiltersRooms.value === 'any';
 
@@ -45,6 +47,19 @@ const getFiltersFeatures = (element) => {
   });
 };
 
+const getFiltersAdvert = (array) => {
+  const filterArray = [];
+  for (let index = 0; index < array.length; index++){
+    if (getFiltersType(array[index]) && getFiltersRooms(array[index]) && getFiltersPrice(array[index]) && getFiltersGuests(array[index]) && getFiltersFeatures(array[index])){
+      filterArray.push(array[index]);
+    }
+    if (filterArray.length > COUNT_ADVERTS) {
+      break;
+    }
+  }
+  return filterArray;
+};
+
 const getFiltersElements = (callback) => {
   filtersFormArray.forEach((item) => {
     item.addEventListener('change', () => {
@@ -53,4 +68,4 @@ const getFiltersElements = (callback) => {
   });
 };
 
-export {getFiltersType, getFiltersPrice, getFiltersRooms, getFiltersGuests, getFiltersFeatures, getFiltersElements};
+export {getFiltersElements, getFiltersAdvert};

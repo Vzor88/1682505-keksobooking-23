@@ -1,5 +1,5 @@
 const ALERT_SHOW_TIME = 10000;
-const RERENDER_DELAY = 500;
+const DEFAULT_DELAY = 500;
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -21,7 +21,7 @@ const showAlert = (message) => {
 
 const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-const getDebounce = (callback, timeoutDelay = RERENDER_DELAY) => {
+const getDebounce = (callback, timeoutDelay = DEFAULT_DELAY) => {
   let timeoutId;
   return (...rest) => {
     clearTimeout(timeoutId);
@@ -29,4 +29,9 @@ const getDebounce = (callback, timeoutDelay = RERENDER_DELAY) => {
   };
 };
 
-export {getDebounce, RERENDER_DELAY, isEscEvent, showAlert};
+function declOfNum(number, titles) {
+  const cases = [2, 0, 1, 1, 1, 2];
+  return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5 ) ? number % 10 : 5]];
+}
+
+export {getDebounce, isEscEvent, showAlert, declOfNum};

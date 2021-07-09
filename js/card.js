@@ -1,10 +1,18 @@
 import {markerGroup, addMapMarker} from './map.js';
-import {filtersFormArray, getAttributeRemoveDisabled} from './activate-form.js';
-import {getFiltersFeatures, getFiltersGuests, getFiltersPrice, getFiltersRooms, getFiltersType} from './filters.js';
+import {getFiltersAdvert} from './filters.js';
+import {loadMap} from './map.js';
+import {declOfNum} from './utils.js';
+
+const TYPE_TRANSLATE_RUS = {
+  bungalow: 'Бунгало',
+  flat: 'Квартира',
+  hotel: 'Отель',
+  house: 'Дом',
+  palace: 'Дворец',
+};
 
 const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
 const buildListFragment = document.createDocumentFragment();
-const COUNT_ADVERTS = 10;
 
 const getDisplayFeaturesList = (array, itemList) => {
   if (Array.isArray(array)) {
@@ -34,43 +42,49 @@ const getDisplayPhotosList = (array, itemList) => {
   }
 };
 
-const getRandRooms = (count) => {
-  let descriptionRooms = `${count} комнат`;
-  if (count === 1) {
-    descriptionRooms = `${count} комната`;
-  } else if (count >= 2 && count < 5 ) {
-    descriptionRooms = `${count} комнаты`;
-  }
-  return descriptionRooms;
+const getRandRooms = (count) => `${count} ${declOfNum(count, ['комната','комнаты', 'комнат'])}` ;
+const getRandGuests = (count) => `${count} ${declOfNum(count, ['гостя', 'гостей', 'гостей'])}`;
+
+
+const getCheckingEmpty = (selector, element) => (!element) ? selector.textContent = '' : element;
+
+const getCheckingElementsAdvert = (item, data) => {
+  getCheckingEmpty(item.querySelector('.popup__avatar'), data.author.avatar);
+  getCheckingEmpty(item.querySelector('.popup__title'), data.offer.title);
+  getCheckingEmpty(item.querySelector('.popup__text--address'), data.offer.address);
+  getCheckingEmpty(item.querySelector('.popup__text--price'), data.offer.price);
+  getCheckingEmpty(item.querySelector('.popup__type'), data.offer.type);
+  getCheckingEmpty(item.querySelector('.popup__text--capacity'), data.offer.rooms);
+  getCheckingEmpty(item.querySelector('.popup__text--capacity'), data.offer.guests);
+  getCheckingEmpty(item.querySelector('.popup__text--time'), data.offer.checkin);
+  getCheckingEmpty(item.querySelector('.popup__text--time'), data.offer.checkout);
+  getCheckingEmpty(item.querySelector('.popup__description'), data.offer.description);
 };
 
-const getRandGuests = (count) => (count === 1) ? `${count} гостя` : `${count} гостей`;
+const getCreateAdvert = (itemCard, advert) => {
+  getCheckingElementsAdvert(itemCard, advert);
+  itemCard.querySelector('.popup__avatar').src = advert.author.avatar;
+  itemCard.querySelector('.popup__title').textContent = advert.offer.title;
+  itemCard.querySelector('.popup__text--address').textContent = advert.offer.address;
+  itemCard.querySelector('.popup__text--price').textContent = `${advert.offer.price} ₽/ночь`;
+  itemCard.querySelector('.popup__type').textContent = TYPE_TRANSLATE_RUS[advert.offer.type];
+  itemCard.querySelector('.popup__text--capacity').textContent = `${getRandRooms(advert.offer.rooms)}  для ${getRandGuests(advert.offer.guests)}`;
+  itemCard.querySelector('.popup__text--time').textContent = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
+  getDisplayFeaturesList(advert.offer.features, itemCard.querySelector('.popup__features'));
+  itemCard.querySelector('.popup__description').textContent = advert.offer.description;
+  getDisplayPhotosList(advert.offer.photos, itemCard.querySelector('.popup__photos'));
+  buildListFragment.appendChild(itemCard);
+};
 
-const checkingEmptyElement = (selector, element) => (!element) ? selector.textContent = '' : element;
-
-const getFiltersAdvert = (array) => array.slice().filter(getFiltersType).filter(getFiltersPrice).filter(getFiltersRooms).filter(getFiltersGuests).filter(getFiltersFeatures).slice(0, COUNT_ADVERTS);
-
-const renderAdvertList = (buildAdvert) => {
+const renderAdvertList = (buildAdverts) => {
+  loadMap();
   markerGroup.clearLayers();
-  getFiltersAdvert(buildAdvert)
+  getFiltersAdvert(buildAdverts)
     .forEach((advert) => {
       const buildItemCard = buildAdvertTemplate.cloneNode(true);
-      buildItemCard.querySelector('.popup__avatar').src = advert.author.avatar;
-      checkingEmptyElement(buildItemCard.querySelector('.popup__title'), advert.offer.title);
-      buildItemCard.querySelector('.popup__title').textContent = advert.offer.title;
-      buildItemCard.querySelector('.popup__text--address').textContent = advert.offer.address;
-      buildItemCard.querySelector('.popup__text--price').textContent = `${advert.offer.price} ₽/ночь`;
-      buildItemCard.querySelector('.popup__type').textContent = advert.offer.type;
-      buildItemCard.querySelector('.popup__text--capacity').textContent = `${getRandRooms(advert.offer.rooms)}  для ${getRandGuests(advert.offer.guests)}`;
-      buildItemCard.querySelector('.popup__text--time').textContent = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
-      getDisplayFeaturesList(advert.offer.features, buildItemCard.querySelector('.popup__features'));
-      checkingEmptyElement(buildItemCard.querySelector('.popup__description'), advert.offer.description);
-      buildItemCard.querySelector('.popup__description').textContent = advert.offer.description;
-      getDisplayPhotosList(advert.offer.photos, buildItemCard.querySelector('.popup__photos'));
-      buildListFragment.appendChild(buildItemCard);
+      getCreateAdvert(buildItemCard, advert);
       addMapMarker(advert.location.lat, advert.location.lng, buildItemCard);
     });
-  getAttributeRemoveDisabled(filtersFormArray);
 };
 
 export {renderAdvertList};

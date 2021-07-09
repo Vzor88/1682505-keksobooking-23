@@ -2,22 +2,23 @@ import {mainPinMarker} from './map.js';
 import {isEscEvent} from './utils.js';
 import {sendData} from './api.js';
 import {avatarPreview} from './image.js';
+import {loadAdvert} from './main.js';
 
-const resetForm = document.querySelector('.ad-form__reset');
 const submitForm = document.querySelector('.ad-form');
-const successMessage = document.querySelector('#success').content.querySelector('.success');
-const errorMessage = document.querySelector('#error').content.querySelector('.error');
-const fieldTitle = document.querySelector('#title');
-const fieldPrice = document.querySelector('#price');
-const fieldType = document.querySelector('#type');
-const fieldRooms = document.querySelector('#room_number');
-const fieldCapacity = document.querySelector('#capacity');
-const fieldTimeIn = document.querySelector('#timein');
-const fieldTimeOut = document.querySelector('#timeout');
-const fieldAddress = document.querySelector('#address');
-const parentCapacity = document.querySelector('.ad-form__element--capacity');
+const resetForm = submitForm.querySelector('.ad-form__reset');
+const fieldTitle = submitForm.querySelector('#title');
+const fieldPrice = submitForm.querySelector('#price');
+const fieldType = submitForm.querySelector('#type');
+const fieldRooms = submitForm.querySelector('#room_number');
+const fieldCapacity = submitForm.querySelector('#capacity');
+const fieldCapacityOptions = fieldCapacity.querySelectorAll('option');
+const fieldTimeIn = submitForm.querySelector('#timein');
+const fieldTimeOut = submitForm.querySelector('#timeout');
+const fieldAddress = submitForm.querySelector('#address');
 const selectsListFilters = document.querySelectorAll('.map__filter');
 const checkboxesListFilters = document.querySelectorAll('.map__checkbox');
+const successMessage = document.querySelector('#success').content.querySelector('.success');
+const errorMessage = document.querySelector('#error').content.querySelector('.error');
 
 const FLOATING_POINT_NUMBER = 5;
 const URL_DEFAULT_AVATAR = 'img/muffin-grey.svg';
@@ -43,17 +44,22 @@ const FIELD_PRICE = {
   },
 };
 
+const COUNT_ROOMS = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0],
+};
+
 const isResetElements = (arraySelects, arrayCheckboxes) => {
   arraySelects.forEach((item) => item.options[0].selected = true);
   arrayCheckboxes.forEach((item) => item.checked = false);
 };
 
-const isResetFieldCapacity = (list) => {
-  parentCapacity.appendChild(list);
-  list.classList.add('capacity');
-  document.querySelector('.capacity').remove();
-  fieldCapacity.remove();
-  parentCapacity.appendChild(list);
+const isDisabledFieldCapacity = () => {
+  for( let index = 0; index < fieldCapacity.length; index++) {
+    fieldCapacity.options[index].setAttribute('disabled', 'disabled');
+  }
 };
 
 const isDefaultFieldAddress = () => {
@@ -69,7 +75,7 @@ const isDefaultPicture = () => {
   });
 };
 
-const determinationMinPrice = () => {
+const getDeterminationMinPrice = () => {
   for (const typeProperty in FIELD_PRICE.MIN) {
     if (fieldType.value === typeProperty) {
       fieldPrice.setAttribute('placeholder', FIELD_PRICE.MIN[fieldType.value]);
@@ -78,24 +84,16 @@ const determinationMinPrice = () => {
   }
 };
 
-const isMatchingFields = () => {
-  const newFieldCapacity = fieldCapacity.cloneNode(true);
-  const listCapacity = Array.from(newFieldCapacity);
-  isResetFieldCapacity(newFieldCapacity);
-  if (fieldRooms.value === '1') {
-    listCapacity[0].remove();
-    listCapacity[1].remove();
-    listCapacity[3].remove();
-  } else if (fieldRooms.value === '2') {
-    listCapacity[0].remove();
-    listCapacity[3].remove();
-  } else if (fieldRooms.value === '3') {
-    listCapacity[3].remove();
-  } else {
-    listCapacity[0].remove();
-    listCapacity[1].remove();
-    listCapacity[2].remove();
-  }
+const isMatchingFields = (count) => {
+  isDisabledFieldCapacity();
+  COUNT_ROOMS[count].forEach((item) => {
+    fieldCapacityOptions.forEach((option) => {
+      if (Number(option.value) === item) {
+        option.disabled = false;
+        option.selected = true;
+      }
+    });
+  });
 };
 
 const getOutputMessage = (element) => {
@@ -107,6 +105,7 @@ const getOutputMessage = (element) => {
         resetForm.click();
       }
     }
+    document.removeEventListener('keydown', (getOutputMessage));
   });
   element.addEventListener('click', (evt) => {
     if (evt.target) {
@@ -115,9 +114,8 @@ const getOutputMessage = (element) => {
         resetForm.click();
       }
     }
+    document.removeEventListener('click', (getOutputMessage));
   });
-  document.removeEventListener('keydown', (getOutputMessage));
-  document.removeEventListener('click', (getOutputMessage));
 };
 
 fieldTitle.addEventListener('input', () => {
@@ -133,7 +131,7 @@ fieldTitle.addEventListener('input', () => {
 });
 
 fieldType.addEventListener('change',() => {
-  determinationMinPrice();
+  getDeterminationMinPrice();
   fieldPrice.value = '';
 });
 
@@ -141,8 +139,8 @@ fieldPrice.addEventListener('input', () => {
   const valuePrice = fieldPrice.value;
   if(valuePrice > FIELD_PRICE.MAX) {
     fieldPrice.setCustomValidity(`Цена должна быть меньше на ${valuePrice - FIELD_PRICE.MAX}`);
-  } else if (valuePrice < determinationMinPrice()) {
-    fieldPrice.setCustomValidity(`Цена должна быть больше на ${determinationMinPrice() - valuePrice}`);
+  } else if (valuePrice < getDeterminationMinPrice()) {
+    fieldPrice.setCustomValidity(`Цена должна быть больше на ${getDeterminationMinPrice() - valuePrice}`);
   } else {
     fieldPrice.setCustomValidity('');
   }
@@ -159,7 +157,7 @@ fieldTimeOut.addEventListener('change', () => {
 
 
 fieldRooms.addEventListener('change', () => {
-  isMatchingFields();
+  isMatchingFields(fieldRooms.value);
 });
 
 resetForm.addEventListener('click', () => {
@@ -171,6 +169,7 @@ resetForm.addEventListener('click', () => {
     lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),
   });
   isDefaultPicture();
+  loadAdvert();
 });
 
 submitForm.addEventListener('submit', (evt) => {
@@ -182,7 +181,11 @@ submitForm.addEventListener('submit', (evt) => {
   );
 });
 
-document.addEventListener('DOMContentLoaded', isMatchingFields);
-document.addEventListener('DOMContentLoaded', isDefaultFieldAddress);
+const onWindowDefaultFields = () => {
+  isMatchingFields(1);
+  isDefaultFieldAddress();
+};
+
+document.addEventListener('DOMContentLoaded', onWindowDefaultFields);
 
 export {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER};
