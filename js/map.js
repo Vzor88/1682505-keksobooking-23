@@ -62,9 +62,9 @@ mainPinMarker.addTo(myMap);
 
 const getValidCoordinates = (lat, lng) => `${Number(lat).toFixed(FLOATING_POINT_NUMBER)}, ${Number(lng).toFixed(FLOATING_POINT_NUMBER)}`;
 
-
 mainPinMarker.on('move', (evt) => {
-  fieldAddress.value = getValidCoordinates(evt.target.getLatLng().lat, evt.target.getLatLng().lng);
+  const {lat, lng} = evt.target.getLatLng();
+  fieldAddress.value = getValidCoordinates(lat, lng);
 });
 
 const markerGroup = L.layerGroup().addTo(myMap);

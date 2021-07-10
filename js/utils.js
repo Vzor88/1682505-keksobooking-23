@@ -21,7 +21,7 @@ const showAlert = (message) => {
 
 const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-const getDebounce = (callback, timeoutDelay = DEFAULT_DELAY) => {
+const setDebounce = (callback, timeoutDelay = DEFAULT_DELAY) => {
   let timeoutId;
   return (...rest) => {
     clearTimeout(timeoutId);
@@ -34,4 +34,4 @@ function declOfNum(number, titles) {
   return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5 ) ? number % 10 : 5]];
 }
 
-export {getDebounce, isEscEvent, showAlert, declOfNum};
+export {setDebounce, isEscEvent, showAlert, declOfNum};
