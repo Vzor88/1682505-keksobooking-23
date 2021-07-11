@@ -3,6 +3,7 @@ import {renderAdvertList} from './card.js';
 import {showAlert, setDebounce} from './utils.js';
 import {getFiltersElements} from './filters.js';
 import {filtersFormArray, getAttributeRemoveDisabled} from './activate-form.js';
+import {loadMap} from './map.js';
 
 const loadAdvert = () => {
   getData(
@@ -15,5 +16,6 @@ const loadAdvert = () => {
   );
 };
 
-loadAdvert();
+loadMap();
+
 export {loadAdvert};

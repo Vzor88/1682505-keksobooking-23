@@ -1,5 +1,6 @@
 import {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER} from './form.js';
 import {activateForm} from './activate-form.js';
+import {loadAdvert} from './main.js';
 
 const MAP_ZOOM = 12;
 const myMap = L.map('map-interactive');
@@ -27,7 +28,10 @@ const BLUE_MARKER = {
 };
 
 const loadMap = () => {
-  myMap.on('load', () => activateForm())
+  myMap.on('load', () => {
+    activateForm();
+    loadAdvert();
+  } )
     .setView({
       lat: Number(DEFAULT_COORDINATES.LATITUDE).toFixed(FLOATING_POINT_NUMBER),
       lng: Number(DEFAULT_COORDINATES.LONGITUDE).toFixed(FLOATING_POINT_NUMBER),

@@ -1,8 +1,8 @@
 import {mainPinMarker} from './map.js';
-import {isEscEvent} from './utils.js';
 import {sendData} from './api.js';
 import {avatarPreview} from './image.js';
 import {loadAdvert} from './main.js';
+import {postMessageError, postMessageSuccess} from './message.js';
 
 const submitForm = document.querySelector('.ad-form');
 const resetForm = submitForm.querySelector('.ad-form__reset');
@@ -17,8 +17,6 @@ const fieldTimeOut = submitForm.querySelector('#timeout');
 const fieldAddress = submitForm.querySelector('#address');
 const selectsListFilters = document.querySelectorAll('.map__filter');
 const checkboxesListFilters = document.querySelectorAll('.map__checkbox');
-const successMessage = document.querySelector('#success').content.querySelector('.success');
-const errorMessage = document.querySelector('#error').content.querySelector('.error');
 
 const FLOATING_POINT_NUMBER = 5;
 const URL_DEFAULT_AVATAR = 'img/muffin-grey.svg';
@@ -96,28 +94,6 @@ const isMatchingFields = (count) => {
   });
 };
 
-const getOutputMessage = (element) => {
-  document.body.appendChild(element);
-  document.addEventListener('keydown', (evt) => {
-    if (isEscEvent(evt)) {
-      element.remove();
-      if (element === successMessage) {
-        resetForm.click();
-      }
-    }
-    document.removeEventListener('keydown', (getOutputMessage));
-  });
-  element.addEventListener('click', (evt) => {
-    if (evt.target) {
-      element.remove();
-      if (element === successMessage) {
-        resetForm.click();
-      }
-    }
-    document.removeEventListener('click', (getOutputMessage));
-  });
-};
-
 fieldTitle.addEventListener('input', () => {
   const valueLength = fieldTitle.value.length;
   if (valueLength < LENGTH_FIELD_TITLE.MIN) {
@@ -175,8 +151,8 @@ resetForm.addEventListener('click', () => {
 submitForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   sendData(
-    () => getOutputMessage(successMessage),
-    () => getOutputMessage(errorMessage),
+    () => postMessageSuccess(),
+    () => postMessageError(),
     new FormData(evt.target),
   );
 });
@@ -188,4 +164,4 @@ const onWindowDefaultFields = () => {
 
 document.addEventListener('DOMContentLoaded', onWindowDefaultFields);
 
-export {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER};
+export {DEFAULT_COORDINATES, fieldAddress, FLOATING_POINT_NUMBER, resetForm};
