@@ -3,6 +3,9 @@ import {getFiltersAdvert} from './filters.js';
 import {loadMap} from './map.js';
 import {declOfNum} from './utils.js';
 
+const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
+const buildListFragment = document.createDocumentFragment();
+
 const TYPE_TRANSLATE_RUS = {
   bungalow: 'Бунгало',
   flat: 'Квартира',
@@ -10,9 +13,6 @@ const TYPE_TRANSLATE_RUS = {
   house: 'Дом',
   palace: 'Дворец',
 };
-
-const buildAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
-const buildListFragment = document.createDocumentFragment();
 
 const getDisplayFeaturesList = (array, itemList) => {
   if (Array.isArray(array)) {
@@ -42,9 +42,8 @@ const getDisplayPhotosList = (array, itemList) => {
   }
 };
 
-const getRandRooms = (count) => `${count} ${declOfNum(count, ['комната','комнаты', 'комнат'])}` ;
+const getRandRooms = (count) => `${count} ${declOfNum(count, ['комната','комнаты', 'комнат'])}`;
 const getRandGuests = (count) => `${count} ${declOfNum(count, ['гостя', 'гостей', 'гостей'])}`;
-
 
 const getCheckingEmpty = (selector, element) => (!element) ? selector.textContent = '' : element;
 

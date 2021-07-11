@@ -9,7 +9,7 @@ const resetForm = submitForm.querySelector('.ad-form__reset');
 const fieldTitle = submitForm.querySelector('#title');
 const fieldPrice = submitForm.querySelector('#price');
 const fieldType = submitForm.querySelector('#type');
-const fieldRooms = submitForm.querySelector('#room_number');
+const fieldRoom = submitForm.querySelector('#room_number');
 const fieldCapacity = submitForm.querySelector('#capacity');
 const fieldCapacityOptions = fieldCapacity.querySelectorAll('option');
 const fieldTimeIn = submitForm.querySelector('#timein');
@@ -132,8 +132,8 @@ fieldTimeOut.addEventListener('change', () => {
 });
 
 
-fieldRooms.addEventListener('change', () => {
-  isMatchingFields(fieldRooms.value);
+fieldRoom.addEventListener('change', () => {
+  isMatchingFields(fieldRoom.value);
 });
 
 resetForm.addEventListener('click', () => {
